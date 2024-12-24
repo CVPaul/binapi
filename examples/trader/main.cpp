@@ -9,6 +9,7 @@
 constexpr char um_rest_api[] = "fapi.binance.com";
 constexpr char um_stream_url[] = "fstream.binance.com";
 
+
 int main() {
     boost::asio::io_context ioctx;
 
