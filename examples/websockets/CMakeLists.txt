@@ -12,6 +12,7 @@ add_definitions(
 
 include_directories(
     ../../include
+    $ENV{CONDA_PREFIX}/include
 )
 
 if (DEFINED ${BOOST_INCLUDE_DIR})

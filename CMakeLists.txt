@@ -15,40 +15,21 @@ include_directories(
     $ENV{CONDA_PREFIX}/include
 )
 
-file(GLOB BINAPI_HEADERS ${CMAKE_SOURCE_DIR}/binapi/*.h ${CMAKE_SOURCE_DIR}/binapi/*.hpp)
-#set(BINAPI_HEADERS
-#    binapi/api.hpp
-#    binapi/flatjson.hpp
-#    binapi/dtf.hpp
-#    binapi/double_type.hpp
-#    binapi/enums.hpp
-#    binapi/errors.hpp
-#    binapi/invoker.hpp
-#    binapi/message.hpp
-#    binapi/pairslist.hpp
-#    binapi/reports.hpp
-#    binapi/tools.hpp
-#    binapi/types.hpp
-#    binapi/websocket.hpp
-#)
-#
-file(GLOB_RECURSE BINAPI_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cc ${CMAKE_SOURCE_DIR}/src/*.cpp)
-#set(BINAPI_SOURCES
-#    src/api.cpp
-#    src/enums.cpp
-#    src/errors.cpp
-#    src/pairslist.cpp
-#    src/reports.cpp
-#    src/tools.cpp
-#    src/types.cpp
-#    src/websocket.cpp
-#)
+file(
+    GLOB_RECURSE
+    BINAPI_HEADERS
+    ${CMAKE_SOURCE_DIR}/binapi/*.h
+    ${CMAKE_SOURCE_DIR}/binapi/*.hpp)
 
-add_executable(
+file(
+    GLOB_RECURSE
+    BINAPI_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/*.cc
+    ${CMAKE_SOURCE_DIR}/src/*.cpp)
+
+add_library(
     ${PROJECT_NAME}
-    #
-    main.cpp
-    #
+    SHARED
     ${BINAPI_SOURCES}
 )
 
@@ -64,3 +45,5 @@ target_link_libraries(
     crypto
     pthread
 )
+
+add_subdirectory(examples/trader)
