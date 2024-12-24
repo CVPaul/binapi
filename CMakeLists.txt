@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.31)
 project(binapi)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -12,40 +12,37 @@ add_definitions(
 
 include_directories(
     ./include
+    $ENV{CONDA_PREFIX}/include
 )
 
-if (DEFINED ${BOOST_INCLUDE_DIR})
-    include_directories(
-        ${BOOST_INCLUDE_DIR}
-    )
-endif()
-
-set(BINAPI_HEADERS
-    binapi/api.hpp
-    binapi/flatjson.hpp
-    binapi/dtf.hpp
-    binapi/double_type.hpp
-    binapi/enums.hpp
-    binapi/errors.hpp
-    binapi/invoker.hpp
-    binapi/message.hpp
-    binapi/pairslist.hpp
-    binapi/reports.hpp
-    binapi/tools.hpp
-    binapi/types.hpp
-    binapi/websocket.hpp
-)
-
-set(BINAPI_SOURCES
-    src/api.cpp
-    src/enums.cpp
-    src/errors.cpp
-    src/pairslist.cpp
-    src/reports.cpp
-    src/tools.cpp
-    src/types.cpp
-    src/websocket.cpp
-)
+file(GLOB BINAPI_HEADERS ${CMAKE_SOURCE_DIR}/binapi/*.h ${CMAKE_SOURCE_DIR}/binapi/*.hpp)
+#set(BINAPI_HEADERS
+#    binapi/api.hpp
+#    binapi/flatjson.hpp
+#    binapi/dtf.hpp
+#    binapi/double_type.hpp
+#    binapi/enums.hpp
+#    binapi/errors.hpp
+#    binapi/invoker.hpp
+#    binapi/message.hpp
+#    binapi/pairslist.hpp
+#    binapi/reports.hpp
+#    binapi/tools.hpp
+#    binapi/types.hpp
+#    binapi/websocket.hpp
+#)
+#
+file(GLOB_RECURSE BINAPI_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cc ${CMAKE_SOURCE_DIR}/src/*.cpp)
+#set(BINAPI_SOURCES
+#    src/api.cpp
+#    src/enums.cpp
+#    src/errors.cpp
+#    src/pairslist.cpp
+#    src/reports.cpp
+#    src/tools.cpp
+#    src/types.cpp
+#    src/websocket.cpp
+#)
 
 add_executable(
     ${PROJECT_NAME}
@@ -55,17 +52,15 @@ add_executable(
     ${BINAPI_SOURCES}
 )
 
-if (DEFINED ${BOOST_LIB_DIR})
-    target_link_libraries(
-        ${PROJECT_NAME}
-        -L${BOOST_LIB_DIR}
-    )
-endif()
+target_link_libraries(
+    ${PROJECT_NAME}
+    ${BOOST_LIB_DIR}
+)
 
 target_link_libraries(
     ${PROJECT_NAME}
     z
-    crypto
     ssl
+    crypto
     pthread
 )
