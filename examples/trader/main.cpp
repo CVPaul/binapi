@@ -6,14 +6,50 @@
 #include <boost/asio/steady_timer.hpp>
 
 
+constexpr char[] um_rest_api = "fapi.binance.com"
+constexpr char[] um_stream_url = "fstream.binance.com"
+
 int main() {
     boost::asio::io_context ioctx;
 
     binapi::ws::websockets ws{
          ioctx
-        ,"stream.binance.com"
+        ,um_stream_url
         ,"9443"
     };
+
+    binapi::rest::api api{
+         ioctx
+        ,um_rest_api
+        ,"443"
+        ,"" // can be empty for non USER_DATA reqs
+        ,"" // can be empty for non USER_DATA reqs
+        ,10000 // recvWindow
+    };
+
+    auto res0 = api.exchange_info("BTCUSDT");
+    if ( !res0 ) {
+        std::cerr << "exchange_info error: " << res0.errmsg << std::endl;
+
+        return EXIT_FAILURE;
+    }
+    std::cout << "exchange info: " << res0.v << std::endl << std::endl;
+
+    auto res1 = api.price("BTCUSDT");
+    if ( !res1 ) {
+        std::cerr << "get price error: " << res1.errmsg << std::endl;
+
+        return EXIT_FAILURE;
+    }
+    std::cout << "price: " << res1.v << std::endl << std::endl;
+
+    auto res2 = api.avg_price("BTCUSDT");
+    if ( !res2 ) {
+        std::cerr << "get avg price error: " << res2.errmsg << std::endl;
+
+        return EXIT_FAILURE;
+    }
+    std::cout << "avg price: " << res2.v << std::endl << std::endl;
 
     ws.klines("BTCUSDT", "1s",
         [](const char *fl, int ec, std::string emsg, auto klines) {
