@@ -47,3 +47,4 @@ target_link_libraries(
 )
 
 add_subdirectory(examples/trader)
+add_subdirectory(examples/synchronous)
