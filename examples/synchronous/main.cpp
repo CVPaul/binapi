@@ -19,7 +19,7 @@ int main() {
     boost::asio::io_context ioctx;
     binapi::rest::api api{
          ioctx
-        ,"api.binance.com"
+        ,"fapi.binance.com"
         ,"443"
         ,"" // can be empty for non USER_DATA reqs
         ,"" // can be empty for non USER_DATA reqs

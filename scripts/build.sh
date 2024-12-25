@@ -1,4 +1,4 @@
-if [ x"$#" == x"--debug" ];then
+if [ x"$1" = x"--debug" ];then
     mode='Debug'
     echo '>>> In Debug Mode...'
 else
