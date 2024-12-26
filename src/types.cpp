@@ -37,10 +37,9 @@ __get_json(T &v, const char *member, const flatjson::fjson &j) {
 }
 
 template<typename T>
-typename std::enable_if<std::is_same<T, double_type>::value>::type
+typename std::enable_if<std::is_same<T, double>::value>::type
 __get_json(T &v, const char *member, const flatjson::fjson &j) {
-    const auto s = j.at(member).to_string();
-    v.assign(s);
+    v = j.at(member).to<T>();
 }
 
 #define __BINAPI_GET2(obj, member, json) \
@@ -336,7 +335,7 @@ const account_info_t::balance_t& account_info_t::get_balance(const char *symbol)
     assert(!"unreachable");
 }
 
-const double_type& account_info_t::add_balance(const char *symbol, const double_type &amount) {
+const double& account_info_t::add_balance(const char *symbol, const double &amount) {
     auto it = balances.find(symbol);
     if ( it != balances.end() ) {
         it->second.free += amount;
@@ -346,7 +345,7 @@ const double_type& account_info_t::add_balance(const char *symbol, const double_
     assert(!"unreachable");
 }
 
-const double_type& account_info_t::sub_balance(const char *symbol, const double_type &amount) {
+const double& account_info_t::sub_balance(const char *symbol, const double &amount) {
     auto it = balances.find(symbol);
     if ( it != balances.end() ) {
         it->second.free -= amount;
@@ -411,7 +410,11 @@ std::ostream &operator<<(std::ostream &os, const exchange_info_t::symbol_t::filt
     << "\"filterType\":\"PERCENT_PRICE\","
     << "\"multiplierUp\":\"" << o.multiplierUp << "\","
     << "\"multiplierDown\":\"" << o.multiplierDown << "\","
+#if TRADE_TYPE == 0
     << "\"avgPriceMins\":" << o.avgPriceMins << ""
+#elif TRADE_TYPE == 1
+    << "\"multiplierDecimal\":" << o.multiplierDecimal << ""
+#endif
     << "}";
 
     return os;
@@ -660,7 +663,11 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
                     exchange_info_t::symbol_t::filter_t::percent_price_t item{};
                     __BINAPI_GET2(item, multiplierUp, fit);
                     __BINAPI_GET2(item, multiplierDown, fit);
+#if TRADE_TYPE == 0
                     __BINAPI_GET2(item, avgPriceMins, fit);
+#elif TRADE_TYPE == 1
+		    __BINAPI_GET2(item, multiplierDecimal, fit);
+#endif
                     filter.filter = std::move(item);
 
                     break;
@@ -696,7 +703,11 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
                 }
                 case fnv1a("MIN_NOTIONAL"): {
                     exchange_info_t::symbol_t::filter_t::min_notional_t item{};
+#if TRADE_TYPE == 0
                     __BINAPI_GET2(item, minNotional, fit);
+#elif TRADE_TYPE == 1
+                    __get_json(item.minNotional, "notional", fit); // um
+#endif
                     filter.filter = std::move(item);
 
                     break;
@@ -763,7 +774,7 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
 
             sym.filters.push_back(std::move(filter));
         }
-
+#if TRADE_TYPE == 0
         const auto permissions = sit.at("permissions");
         assert(permissions.is_array());
         res.permissions = 0u;
@@ -772,7 +783,7 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
             std::size_t flag = static_cast<std::size_t>(e_permissions_from_string(sflag.data()));
             res.permissions |= flag;
         }
-
+#endif
         std::string symbol = sym.symbol;
         res.symbols.emplace(std::move(symbol), std::move(sym));
     }
@@ -863,8 +874,8 @@ depths_t depths_t::construct(const flatjson::fjson &json) {
         depths_t::depth_t item{};
         const auto it = bids.at(idx);
         assert(it.is_array());
-        item.price.assign(it.at(0).to_string());
-        item.amount.assign(it.at(1).to_string());
+        item.price = it.at(0).to_double();
+        item.amount= it.at(1).to_double();
 
         res.bids.push_back(std::move(item));
     }
@@ -874,8 +885,8 @@ depths_t depths_t::construct(const flatjson::fjson &json) {
         depths_t::depth_t item{};
         const auto it = asks.at(idx);
         assert(it.is_array());
-        item.price.assign(it.at(0).to_string());
-        item.amount.assign(it.at(1).to_string());
+        item.price = it.at(0).to_double();
+        item.amount = it.at(1).to_double();
 
         res.asks.push_back(std::move(item));
     }
@@ -1080,16 +1091,16 @@ klines_t klines_t::construct(const flatjson::fjson &json) {
         const auto it = json.at(idx);
         assert(it.is_array());
         item.start_time = it.at(0).to<std::size_t>(); // Open time
-        item.open.assign(it.at(1).to_string()); // Open
-        item.high.assign(it.at(2).to_string()); // High
-        item.low.assign(it.at(3).to_string()); // Low
-        item.close.assign(it.at(4).to_string()); // Close
-        item.volume.assign(it.at(5).to_string()); // Volume
+        item.open = it.at(1).to_double(); // Open
+        item.high = it.at(2).to_double(); // High
+        item.low = it.at(3).to_double(); // Low
+        item.close = it.at(4).to_double(); // Close
+        item.volume = it.at(5).to_double(); // Volume
         item.end_time = it.at(6).to<std::size_t>(); // Close time
-        item.quote_volume.assign(it.at(7).to_string()); // Quote asset volume
+        item.quote_volume = it.at(7).to_double(); // Quote asset volume
         item.num_trades = it.at(8).to<std::size_t>(); // Number of trades
-        item.taker_buy_base_vol.assign(it.at(9).to_string()); // Taker buy base asset volume
-        item.taker_buy_quote_vol.assign(it.at(10).to_string()); // Taker buy quote asset volume
+        item.taker_buy_base_vol = it.at(9).to_double(); // Taker buy base asset volume
+        item.taker_buy_quote_vol = it.at(10).to_double(); // Taker buy quote asset volume
 
         res.klines.push_back(std::move(item));
     }
@@ -1274,8 +1285,8 @@ std::ostream &operator<<(std::ostream &os, const new_order_info_result_t &o) {
     return os;
 }
 
-double_type new_order_info_full_t::avg_price(const std::vector<fill_part> &parts) {
-    double_type res{};
+double new_order_info_full_t::avg_price(const std::vector<fill_part> &parts) {
+    double res{};
     for ( const auto &it: parts ) {
         res += it.price;
     }
@@ -1283,8 +1294,8 @@ double_type new_order_info_full_t::avg_price(const std::vector<fill_part> &parts
 
     return res;
 }
-double_type new_order_info_full_t::max_price(const std::vector<fill_part> &parts) {
-    double_type res{};
+double new_order_info_full_t::max_price(const std::vector<fill_part> &parts) {
+    double res{};
     for ( const auto &it: parts ) {
         res = res < it.price ? it.price : res;
     }
@@ -1292,8 +1303,8 @@ double_type new_order_info_full_t::max_price(const std::vector<fill_part> &parts
     return res;
 }
 
-double_type new_order_info_full_t::sum_amount(const std::vector<fill_part> &parts) {
-    double_type res{};
+double new_order_info_full_t::sum_amount(const std::vector<fill_part> &parts) {
+    double res{};
     for ( const auto &it: parts ) {
         res += it.qty;
     }
@@ -1301,8 +1312,8 @@ double_type new_order_info_full_t::sum_amount(const std::vector<fill_part> &part
     return res;
 }
 
-double_type new_order_info_full_t::sum_commission(const std::vector<fill_part> &parts) {
-    double_type res{};
+double new_order_info_full_t::sum_commission(const std::vector<fill_part> &parts) {
+    double res{};
     for ( const auto &it: parts ) {
         res += it.commission;
     }
@@ -1702,8 +1713,8 @@ part_depths_t part_depths_t::construct(const flatjson::fjson &json) {
     for ( auto idx = 0u; idx < a.size(); ++idx ) {
         part_depths_t::depth_t item{};
         const auto it = a.at(idx);
-        item.price.assign(it.at(0).to_string());
-        item.amount.assign(it.at(1).to_string());
+        item.price = it.at(0).to_double();
+        item.amount = it.at(1).to_double();
 
         res.a.push_back(std::move(item));
     }
@@ -1711,8 +1722,8 @@ part_depths_t part_depths_t::construct(const flatjson::fjson &json) {
     for ( auto idx = 0u; idx < b.size(); ++idx ) {
         part_depths_t::depth_t item{};
         const auto it = b.at(idx);
-        item.price.assign(it.at(0).to_string());
-        item.amount.assign(it.at(1).to_string());
+        item.price = it.at(0).to_double();
+        item.amount = it.at(1).to_double();
 
         res.b.push_back(std::move(item));
     }
@@ -1765,8 +1776,8 @@ diff_depths_t diff_depths_t::construct(const flatjson::fjson &json) {
     for ( auto idx = 0u; idx < a.size(); ++idx ) {
         diff_depths_t::depth_t item{};
         const auto it = a.at(idx);
-        item.price.assign(it.at(0).to_string());
-        item.amount.assign(it.at(1).to_string());
+        item.price = it.at(0).to_double();
+        item.amount = it.at(1).to_double();
 
         res.a.push_back(std::move(item));
     }
@@ -1774,8 +1785,8 @@ diff_depths_t diff_depths_t::construct(const flatjson::fjson &json) {
     for ( auto idx = 0u; idx < b.size(); ++idx ) {
         diff_depths_t::depth_t item{};
         const auto it = b.at(idx);
-        item.price.assign(it.at(0).to_string());
-        item.amount.assign(it.at(1).to_string());
+        item.price = it.at(0).to_double();
+        item.amount = it.at(1).to_double();
 
         res.b.push_back(std::move(item));
     }

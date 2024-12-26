@@ -1,24 +1,26 @@
-
 #ifndef __binapi_marco_h__
 #define __binapi_marco_h__
 
-#define UM_API_VER "/fapi/v1/"
-#define UM_REST_URL "fapi.binance.com"
-#define UM_WSS_URL "fstream.binance.com"
-#define GET_UM_REST_ROUTE(path) UM_API_VER path
-#define GET_UM_WSS_ROUTE(path) UM_API_VER path
+#if TRADE_TYPE == 0
+    #define API_VER "/api/v3/"
+    #define REST_URL "api.binance.com"
+    #define WSS_URL "stream.binance.com"
+    #pragma message("Compiling for TRADE_TYPE 0: API_VER = /api/v3/")
+#elif TRADE_TYPE == 1
+    #define API_VER "/fapi/v1/"
+    #define REST_URL "fapi.binance.com"
+    #define WSS_URL "fstream.binance.com"
+    #pragma message("Compiling for TRADE_TYPE 1: API_VER = /fapi/v1/")
+#elif TRADE_TYPE == 2
+    #define API_VER "/dapi/v1/"
+    #define REST_URL "dapi.binance.com"
+    #define WSS_URL "dstream.binance.com"
+    #pragma message("Compiling for TRADE_TYPE 2: API_VER = /dapi/v1/")
+#else
+    #error "Invalid TRDE_TYPE Value!"
+#endif
 
-#define CM_API_VER "/dapi/v1/"
-#define CM_REST_URL "dapi.binance.com"
-#define CM_WSS_URL "dstream.binance.com"
-#define GET_CM_REST_ROUTE(path) CM_API_VER path
-#define GET_CM_WSS_ROUTE(path) CM_API_VER path
-
-#define SPOT_API_VER "/api/v3/"
-#define SPOT_REST_URL "api.binance.com"
-#define SPOT_WSS_URL "stream.binance.com"
-#define GET_SPOT_REST_ROUTE(path) SPOT_API_VER path
-#define GET_SPOT_WSS_ROUTE(path) SPOT_API_VER path
-
+#define GET_REST_ROUTE(path) API_VER path
+#define GET_WSS_ROUTE(path) API_VER path
 
 #endif //  __binapi_marco_h__

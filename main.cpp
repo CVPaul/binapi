@@ -101,8 +101,8 @@ int main(int argc, char **argv) {
         binapi::make_balance_report(std::cout, api, accinfo, exinfo);
         std::cout << std::endl;
         std::cout << "********************* TRADES REPORT *********************************" << std::endl;
-//        binapi::make_trades_report(std::cout, api, accinfo, exinfo, {"ETHUSDT"}, trades_report_cb);
-//        binapi::make_trades_report(std::cout, api, accinfo, exinfo, {"*USDT"}, trades_report_cb, 0, "2018-11-12 17:38:29"); // "2018-11-12 17:38:29"
+        // binapi::make_trades_report(std::cout, api, accinfo, exinfo, {"ETHUSDT"}, trades_report_cb);
+        // binapi::make_trades_report(std::cout, api, accinfo, exinfo, {"*USDT"}, trades_report_cb, 0, "2018-11-12 17:38:29"); // "2018-11-12 17:38:29"
         binapi::make_trades_report_for_last_day(std::cout, api, accinfo, exinfo, {"ETHUSDT"}, trades_report_cb);
 
         std::cout << std::endl;
@@ -187,25 +187,25 @@ int main(int argc, char **argv) {
     BREAK_IF_ERROR(mytrades);
     std::cout << "mytrades=" << mytrades.v << std::endl << std::endl;
 
-//    auto neworder = api.new_order(
-//         "BNBUSDT"
-//        ,binapi::e_side::buy
-//        ,binapi::e_type::limit
-//        ,binapi::e_time::GTC
-//        ,binapi::e_trade_resp_type::FULL
-//        ,"0.1"
-//        ,"0"
-//        ,nullptr
-//        ,nullptr
-//        ,nullptr
-//    );
-//    BREAK_IF_ERROR(neworder);
-//    std::cout << "neworder=" << neworder.v << std::endl << std::endl;
+    // auto neworder = api.new_order(
+    //      "BNBUSDT"
+    //     ,binapi::e_side::buy
+    //     ,binapi::e_type::limit
+    //     ,binapi::e_time::GTC
+    //     ,binapi::e_trade_resp_type::FULL
+    //     ,"0.1"
+    //     ,"0"
+    //     ,nullptr
+    //     ,nullptr
+    //     ,nullptr
+    // );
+    // BREAK_IF_ERROR(neworder);
+    // std::cout << "neworder=" << neworder.v << std::endl << std::endl;
 
-//    auto cancelorder = api.cancel_order("BNBUSDT", 1, nullptr, nullptr);
-//    BREAK_IF_ERROR(cancelorder);
-//    std::cout << "cancelorder=" << cancelorder.v << std::endl << std::endl;
-//
+    // auto cancelorder = api.cancel_order("BNBUSDT", 1, nullptr, nullptr);
+    // BREAK_IF_ERROR(cancelorder);
+    // std::cout << "cancelorder=" << cancelorder.v << std::endl << std::endl;
+    //
     auto start_uds = api.start_user_data_stream();
     BREAK_IF_ERROR(start_uds);
     std::cout << "start_uds=" << start_uds.v << std::endl << std::endl;
@@ -276,9 +276,9 @@ int main(int argc, char **argv) {
     BREAK_IF_ERROR(ping_uds);
     std::cout << "ping_uds=" << ping_uds.v << std::endl << std::endl;
 
-////    auto close_uds = api.close_user_data_stream(start_uds.v.listenKey);
-////    BREAK_IF_ERROR(close_uds);
-////    std::cout << "close_uds=" << close_uds.v << std::endl << std::endl;
+    // auto close_uds = api.close_user_data_stream(start_uds.v.listenKey);
+    // BREAK_IF_ERROR(close_uds);
+    // std::cout << "close_uds=" << close_uds.v << std::endl << std::endl;
 
     ioctx.run();
 

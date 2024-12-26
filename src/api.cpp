@@ -40,8 +40,6 @@ namespace rest {
 
 /*************************************************************************************************/
 
-#define GTE_REST_ROUTE(path) GET_UM_REST_ROUTE(path)
-
 #define __CATCH_BLOCK_WRITES_TO_STDOUT
 
 #ifndef __CATCH_BLOCK_WRITES_TO_STDOUT

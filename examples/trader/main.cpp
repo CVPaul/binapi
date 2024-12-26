@@ -12,13 +12,13 @@ int main() {
 
     binapi::ws::websockets ws{
          ioctx
-        ,UM_WSS_URL
+        ,WSS_URL
         ,"9443"
     };
 
     binapi::rest::api api{
          ioctx
-        ,UM_REST_URL
+        ,REST_URL
         ,"443"
         ,"sVxH1Gao4OpkPfrLKBCPvd8CoZnwGJsEVGAlSTJxXrVW9Pp4TcgJgeuii6H4CbBo" // can be empty for non USER_DATA reqs
         ,"" // can be empty for non USER_DATA reqs
