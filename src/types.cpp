@@ -628,7 +628,11 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
         __BINAPI_GET2(sym, baseAssetPrecision, sit);
         __BINAPI_GET2(sym, quoteAsset, sit);
         __BINAPI_GET2(sym, quotePrecision, sit);
-        __BINAPI_GET2(sym, icebergAllowed, sit);
+	try{ // UM do not have icebergAllowed field
+            __BINAPI_GET2(sym, icebergAllowed, sit);
+	}catch(...){
+	    // DO NOTHING
+	}
         const auto types = sit.at("orderTypes");
         assert(types.is_array());
         for ( auto idx2 = 0u; idx2 < types.size(); ++idx2 ) {
@@ -715,7 +719,9 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
                 }
                 case fnv1a("MAX_NUM_ALGO_ORDERS"): {
                     exchange_info_t::symbol_t::filter_t::max_num_algo_orders_t item{};
+#if TRADE_TYPE == 0
                     __BINAPI_GET2(item, maxNumAlgoOrders, fit);
+#if TRADE_TYPE == 1
                     filter.filter = std::move(item);
 
                     break;

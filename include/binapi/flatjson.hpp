@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include<iostream>
 
 /*************************************************************************************************/
 
@@ -1452,7 +1453,7 @@ public:
         if ( res.first ) {
             return {m_storage, res.first, res.second};
         }
-
+	std::cout << "missing key:" << key << std::endl;
         throw std::runtime_error(__FLATJSON__MAKE_ERROR_MESSAGE("key not found"));
     }
     // for arrays
