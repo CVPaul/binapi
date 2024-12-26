@@ -40,7 +40,7 @@ namespace rest {
 
 /*************************************************************************************************/
 
-#define GET_REST_ROUTE(path) GET_UM_REST_ROUTE(path)
+#define GTE_REST_ROUTE(path) GET_UM_REST_ROUTE(path)
 
 #define __CATCH_BLOCK_WRITES_TO_STDOUT
 
@@ -452,7 +452,7 @@ struct api::impl {
         }
 
         res.v = std::move(bres.body());
-//        std::cout << target << " REPLY:\n" << res.v << std::endl << std::endl;
+        // std::cout << target << " REPLY:\n" << res.v << std::endl << std::endl;
 
         ssl_stream.shutdown(ec);
 

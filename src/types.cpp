@@ -628,11 +628,9 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
         __BINAPI_GET2(sym, baseAssetPrecision, sit);
         __BINAPI_GET2(sym, quoteAsset, sit);
         __BINAPI_GET2(sym, quotePrecision, sit);
-	try{ // UM do not have icebergAllowed field
-            __BINAPI_GET2(sym, icebergAllowed, sit);
-	}catch(...){
-	    // DO NOTHING
-	}
+#if TRADE_TYPE == 0
+        __BINAPI_GET2(sym, icebergAllowed, sit); // only spot have icebergAllowed Field
+#endif
         const auto types = sit.at("orderTypes");
         assert(types.is_array());
         for ( auto idx2 = 0u; idx2 < types.size(); ++idx2 ) {
@@ -712,7 +710,11 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
                 }
                 case fnv1a("MAX_NUM_ORDERS"): {
                     exchange_info_t::symbol_t::filter_t::max_num_orders_t item{};
-                    __BINAPI_GET2(item, maxNumOrders, fit);
+#if TRADE_TYPE == 0
+                    __BINAPI_GET2(item, maxNumOrders, fit); // spot
+#elif TRADE_TYPE == 1
+                    __get_json(item.maxNumOrders, "limit", fit); // um
+#endif
                     filter.filter = std::move(item);
 
                     break;
@@ -721,7 +723,9 @@ exchange_info_t exchange_info_t::construct(const flatjson::fjson &json) {
                     exchange_info_t::symbol_t::filter_t::max_num_algo_orders_t item{};
 #if TRADE_TYPE == 0
                     __BINAPI_GET2(item, maxNumAlgoOrders, fit);
-#if TRADE_TYPE == 1
+#elif TRADE_TYPE == 1
+                    __get_json(item.maxNumAlgoOrders, "limit", fit);
+#endif
                     filter.filter = std::move(item);
 
                     break;

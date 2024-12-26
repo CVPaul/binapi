@@ -3,6 +3,7 @@
 *.log
 *.exe
 *.hdf
+*.json
 # folders
 [Bb]in
 [Bb]uild
