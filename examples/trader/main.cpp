@@ -1,22 +1,35 @@
 #include <iostream>
 #include <binapi/api.hpp>
 #include <binapi/marco.h>
-#include <binapi/websocket.hpp>
+#include <binapi/websocket.h>
 
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
+
+#if TRADE_TYPE == 0
+namespace websock = binapi::ws::spot;
+namespace restful = binapi::rest::spot;
+#elif TRADE_TYPE == 1
+namespace websock = binapi::ws::um;
+namespace restful = binapi::rest::um;
+#elif TRADE_TYPE == 2
+namespace websock = binapi::ws::cm;
+namespace restful = binapi::rest::Cm
+#else
+#error "Invalid TRADE_TYPE in trader::main"
+#endif
 
 
 int main() {
     boost::asio::io_context ioctx;
 
-    binapi::ws::websockets ws{
+    websock::websockets ws{
          ioctx
         ,WSS_URL
         ,"9443"
     };
 
-    binapi::rest::api api{
+    restful::api api{
          ioctx
         ,REST_URL
         ,"443"

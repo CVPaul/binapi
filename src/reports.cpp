@@ -16,7 +16,6 @@
 #include <binapi/dtf.hpp>
 
 #include <boost/format.hpp>
-
 #include <iostream>  // TODO: comment out
 
 namespace binapi {
@@ -115,7 +114,7 @@ struct cycle_pair {
     rest::order_info_t buy;
 };
 
-std::vector<cycle_pair> get_full_cycle_trades(binapi::rest::api                                     &api,
+std::vector<cycle_pair> get_full_cycle_trades(restful::api                                          &api,
                                               const trade_info_container_t                          &trades,
                                               const std::function<void(const rest::order_info_t &)> &tick) {
     std::vector<cycle_pair> res;
@@ -182,7 +181,7 @@ pair_trades calc_pair_trades_info(const std::vector<cycle_pair> &trades) {
 /*************************************************************************************************/
 
 void make_trades_report(std::ostream                                          &os,
-                        rest::api                                             &api,
+                        restful::api                                          &api,
                         const rest::account_info_t                            &accinfo,
                         const rest::exchange_info_t                           &exinfo,
                         const std::vector<std::string>                        &pairs,
@@ -305,7 +304,7 @@ void make_trades_report(std::ostream                                          &o
 }
 
 void make_trades_report_for_last_day(std::ostream                                          &os,
-                                     rest::api                                             &api,
+                                     restful::api                                          &api,
                                      const rest::account_info_t                            &accinfo,
                                      const rest::exchange_info_t                           &exinfo,
                                      const std::vector<std::string>                        &pairs,
@@ -321,7 +320,7 @@ void make_trades_report_for_last_day(std::ostream                               
 /*************************************************************************************************/
 /*************************************************************************************************/
 
-rest::orders_info_t get_open_orders(rest::api                                      &api,
+rest::orders_info_t get_open_orders(restful::api                                   &api,
                                     const rest::exchange_info_t                    &exinfo,
                                     const std::vector<std::string>                 &pairs,
                                     const std::function<void(const std::string &)> &tick,
@@ -464,7 +463,7 @@ void make_open_orders_detailed(std::ostream                        &os,
 }
 
 void make_open_orders_report(std::ostream                                   &os,
-                             rest::api                                      &api,
+                             restful::api                                   &api,
                              const rest::exchange_info_t                    &exinfo,
                              const std::vector<std::string>                 &pairs,
                              const std::function<void(const std::string &)> &tick,
@@ -481,7 +480,7 @@ void make_open_orders_report(std::ostream                                   &os,
 /*************************************************************************************************/
 
 void make_balance_report(std::ostream                &os,
-                         rest::api                   &api,
+                         restful::api                &api,
                          const rest::account_info_t  &accinfo,
                          const rest::exchange_info_t &exinfo) {
     (void)api;
@@ -500,7 +499,7 @@ void make_balance_report(std::ostream                &os,
 /*************************************************************************************************/
 
 void show_exchanger_price_for_orders(std::ostream                                   &os,
-                                     rest::api                                      &api,
+                                     restful::api                                   &api,
                                      const rest::exchange_info_t                    &exinfo,
                                      const std::vector<std::string>                 &pairs,
                                      const std::function<void(const std::string &)> &tick) {
@@ -557,7 +556,7 @@ void show_exchanger_price_for_orders(std::ostream                               
 /*************************************************************************************************/
 
 void calc_loss_for_orders(std::ostream                                   &os,
-                          rest::api                                      &api,
+                          restful::api                                   &api,
                           const rest::exchange_info_t                    &exinfo,
                           const std::vector<std::string>                 &pairs,
                           const std::function<void(const std::string &)> &tick) {

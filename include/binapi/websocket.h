@@ -47,6 +47,18 @@ struct book_ticker_t;
 
 /*************************************************************************************************/
 
+#if TRADE_TYPE == 0
+namespace spot {
+#elif TRADE_TYPE == 1
+namespace um {
+#elif TRADE_TYPE == 2
+namespace cm {
+#else
+#error "Invalid TRADE_TYPE"
+#endif
+
+/*************************************************************************************************/
+
 struct websockets final {
     websockets(const websockets &) = delete;
     websockets& operator= (const websockets &) = delete;
@@ -132,7 +144,7 @@ private:
 };
 
 /*************************************************************************************************/
-
+} // ns spot|um|cm
 } // ns ws
 } // ns binapi
 

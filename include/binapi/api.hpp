@@ -28,6 +28,15 @@ class io_context;
 
 namespace binapi {
 namespace rest {
+#if TRADE_TYPE == 0
+namespace spot {
+#elif TRADE_TYPE == 1
+namespace um {
+#elif TRADE_TYPE == 2
+namespace cm {
+#else
+#error "Invalid TRADE_TYPE"
+#endif
 
 /*************************************************************************************************/
 
@@ -357,7 +366,7 @@ private:
 };
 
 /*************************************************************************************************/
-
+} // ns spot|um|cm
 } // ns rest
 } // ns binapi
 
